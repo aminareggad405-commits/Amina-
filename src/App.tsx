@@ -7,6 +7,7 @@ import { SpeedChallenge } from './components/SpeedChallenge';
 import { LeaderboardView } from './components/LeaderboardView';
 import { GrammarReferenceModal } from './components/GrammarReferenceModal';
 import { BadgeToast } from './components/BadgeToast';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { INITIAL_BADGES, SAMPLE_LEADERBOARD } from './data/exercises';
 import { LESSONS } from './data/curriculum';
 import { Badge, LeaderboardUser } from './types/grammar';
@@ -329,6 +330,9 @@ export default function App() {
         badge={newlyUnlockedBadge}
         onDismiss={() => setNewlyUnlockedBadge(null)}
       />
+
+      {/* Offline Connectivity Indicator */}
+      <OfflineIndicator />
     </div>
   );
 }

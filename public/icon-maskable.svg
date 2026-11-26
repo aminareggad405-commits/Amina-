@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#065f46" />
+    </linearGradient>
+    <linearGradient id="accentGradMask" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <!-- Full-bleed background for maskable & Apple Touch icon safe zone -->
+  <rect width="512" height="512" fill="url(#bgGradMask)" />
+  <!-- Scaled down to 72% centered inside 512x512 (~14% padding on all sides) -->
+  <g transform="translate(71.68, 71.68) scale(0.72)">
+    <path d="M136 228 C136 336, 200 392, 256 392 C328 392, 376 332, 376 244 L376 196 C376 178, 362 164, 344 164 C326 164, 312 178, 312 196 L312 248 C312 296, 286 328, 256 328 C222 328, 200 296, 200 228 C200 210, 186 196, 168 196 C150 196, 136 210, 136 228 Z" fill="#ffffff" />
+    <rect x="234" y="112" width="44" height="44" rx="10" transform="rotate(45 256 134)" fill="url(#accentGradMask)" />
+    <path d="M180 426 L332 414" stroke="url(#accentGradMask)" stroke-width="14" stroke-linecap="round" />
+  </g>
+</svg>
