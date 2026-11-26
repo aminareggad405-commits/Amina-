@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { Download, Share, PlusSquare, Smartphone, X } from 'lucide-react';
+import { Download, Share, PlusSquare, Smartphone, X, Copy, Check } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { soundFx } from '../utils/audio';
 
-export const PWAInstallButton: React.FC = () => {
+interface PWAInstallButtonProps {
+  variant?: 'icon' | 'button';
+}
+
+export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
+  variant = 'icon'
+}) => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  // If already running as an installed standalone PWA, hide the button
+  // Hide when already running as an installed standalone app
   if (isInstalled) {
     return null;
   }
@@ -15,22 +22,47 @@ export const PWAInstallButton: React.FC = () => {
   const handleClick = async () => {
     soundFx.playClick();
     if (isInstallable) {
-      await install();
+      const accepted = await install();
+      if (accepted) {
+        soundFx.playFanfare();
+      }
     } else {
       setShowGuideModal(true);
     }
   };
 
+  const handleCopyUrl = async () => {
+    soundFx.playClick();
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // ignore clipboard errors
+    }
+  };
+
   return (
     <>
-      <button
-        onClick={handleClick}
-        title="تثبيت تطبيق نبراس النحو على هاتفك أو جهازك"
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-2xs transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-      >
-        <Download className="w-3.5 h-3.5" />
-        <span>تثبيت التطبيق</span>
-      </button>
+      {variant === 'icon' ? (
+        <button
+          onClick={handleClick}
+          title="تنزيل وتثبيت التطبيق على الهاتف"
+          aria-label="تنزيل وتثبيت التطبيق"
+          className="relative p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-all active:scale-95 cursor-pointer shrink-0 flex items-center justify-center"
+        >
+          <Download className="w-4 h-4" />
+        </button>
+      ) : (
+        <button
+          onClick={handleClick}
+          title="تنزيل وتثبيت التطبيق على هاتفك أو جهازك"
+          className="px-4 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold rounded-xl text-sm transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
+        >
+          <Download className="w-4 h-4 text-emerald-700" />
+          <span>تنزيل التطبيق</span>
+        </button>
+      )}
 
       {showGuideModal && (
         <div
@@ -47,7 +79,7 @@ export const PWAInstallButton: React.FC = () => {
                   <Smartphone className="w-5 h-5" />
                 </div>
                 <h3 className="text-base sm:text-lg font-black text-slate-900">
-                  {isIOS ? 'تثبيت التطبيق على الآيفون والآيباد' : 'تثبيت التطبيق على الهاتف'}
+                  {isIOS ? 'تنزيل التطبيق على الآيفون والآيباد' : 'تنزيل وتثبيت التطبيق'}
                 </h3>
               </div>
               <button
@@ -61,31 +93,45 @@ export const PWAInstallButton: React.FC = () => {
 
             {isIOS ? (
               <div className="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                <p>لتثبيت «نِبرَاسُ النَّحْوِ» كتطبيق مستقل يعمل دون إنترنت على متصفح Safari:</p>
+                <p>لتنزيل «نِبرَاسُ النَّحْوِ» على شاشة هاتفك ليعمل دون إنترنت على Safari:</p>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
                   <Share className="w-5 h-5 text-blue-600 shrink-0" />
-                  <span>١. اضغط على زر <strong>المشاركة (Share)</strong> في شريط متصفح Safari.</span>
+                  <span>١. اضغط على أيقونة <strong>المشاركة (Share)</strong> في شريط متصفح Safari.</span>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
                   <PlusSquare className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <span>٢. مرر للأسفل واختر <strong>إضافة إلى الشاشة الرئيسية (Add to Home Screen)</strong>.</span>
+                  <span>٢. اختر <strong>إضافة إلى الشاشة الرئيسية (Add to Home Screen)</strong>.</span>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span>٣. اضغط على <strong>إضافة (Add)</strong> في الزاوية العلوية وسيظهر التطبيق فوراً على شاشتك.</span>
+                  <span>٣. اضغط <strong>إضافة (Add)</strong> وسيُثبَّت التطبيق فوراً على هاتفك.</span>
                 </div>
               </div>
             ) : (
               <div className="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                <p>يمكنك تثبيت «نِبرَاسُ النَّحْوِ» على هاتفك الأندرويد أو جهازك ليفتح بملء الشاشة ويعمل دون إنترنت:</p>
+                <p>لتنزيل التطبيق مباشرة بنقرة واحدة عبر المتصفح على هاتفك الأندرويد أو حاسوبك:</p>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span>١. افتح التطبيق في متصفح <strong>Chrome</strong> أو <strong>Edge</strong> في نافذة مستقلة.</span>
+                  <span>١. إذا كنت تشاهد التطبيق داخل نافذة معاينة، انسخ الرابط أدناه وافتحه مباشرة في متصفح <strong>Chrome</strong> أو <strong>Edge</strong>.</span>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span>٢. اضغط على قائمة المتصفح (<strong>⋮</strong>) أو أيقونة التثبيت في شريط العنوان.</span>
+                  <span>٢. اضغط على أيقونة التنزيل في شريط التطبيق أو من قائمة المتصفح (<strong>⋮</strong>) واختر <strong>تثبيت التطبيق</strong>.</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span>٣. اختر <strong>تثبيت التطبيق (Install app)</strong> أو <strong>إضافة إلى الشاشة الرئيسية</strong>.</span>
-                </div>
+
+                <button
+                  onClick={handleCopyUrl}
+                  className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-600" />
+                      <span className="text-emerald-700">تم نسخ رابط التطبيق بنجاح!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      <span>نسخ رابط التطبيق لفتحه في متصفح الهاتف</span>
+                    </>
+                  )}
+                </button>
               </div>
             )}
 
@@ -96,7 +142,7 @@ export const PWAInstallButton: React.FC = () => {
               }}
               className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-colors cursor-pointer"
             >
-              حسناً، فهمت
+              إغلاق
             </button>
           </div>
         </div>

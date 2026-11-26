@@ -97,8 +97,8 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-[11px] text-emerald-700 font-normal">XP</span>
           </div>
 
-          {/* In-App PWA Install Button */}
-          <PWAInstallButton />
+          {/* One-click Download/Install App Icon */}
+          <PWAInstallButton variant="icon" />
 
           {/* Audio toggle button */}
           <button

@@ -2,6 +2,7 @@ import React from 'react';
 import { LESSONS } from '../data/curriculum';
 import { soundFx } from '../utils/audio';
 import { InteractiveQuestionCard } from './InteractiveQuestionCard';
+import { PWAInstallButton } from './PWAInstallButton';
 import { BookOpen, Zap, Play, ArrowLeft, CheckCircle2, BookMarked } from 'lucide-react';
 
 interface HomeDashboardProps {
@@ -84,6 +85,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                   <BookMarked className="w-4 h-4 text-emerald-700" />
                   <span>جدول العلامات</span>
                 </button>
+
+                <PWAInstallButton variant="button" />
               </div>
 
               <div className="pt-2 flex flex-wrap items-center gap-5 text-xs text-slate-500 font-medium">
